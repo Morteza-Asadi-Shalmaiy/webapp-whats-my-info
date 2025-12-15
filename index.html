@@ -1,57 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>What's My Info</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>System & Network Information</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<h1>System & Network Information</h1>
 
-<h1>📊 What's My Info</h1>
+<section class="card">
+  <h2>Public IP Addresses</h2>
+  <p><b>IPv4:</b> <span id="ipv4">Loading...</span></p>
+  <p><b>IPv6:</b> <span id="ipv6">Not available</span></p>
+</section>
 
+<section class="card">
+  <h2>IP Information</h2>
+  <p><b>ISP / Organization:</b> <span id="isp"></span></p>
+  <p><b>ASN:</b> <span id="asn"></span></p>
+  <p><b>City:</b> <span id="city"></span></p>
+  <p><b>Region:</b> <span id="region"></span></p>
+  <p><b>Country:</b> <span id="country"></span></p>
+</section>
 
-<div class="card">
-<h2>🌐 Network</h2>
-<p><b>IP:</b> <span id="ip"></span></p>
-<p><b>ISP:</b> <span id="isp"></span></p>
-<p><b>Country:</b> <span id="country"></span></p>
-<p><b>City:</b> <span id="city"></span></p>
-<p><b>Timezone:</b> <span id="timezone"></span></p>
-</div>
+<section class="card">
+  <h2>Geolocation (IP-based, Approximate)</h2>
+  <p><b>Latitude:</b> <span id="lat"></span></p>
+  <p><b>Longitude:</b> <span id="lon"></span></p>
+  <p><b>Timezone:</b> <span id="timezone"></span></p>
+</section>
 
+<section class="card">
+  <h2>System Environment</h2>
+  <p><b>Operating System:</b> <span id="os"></span></p>
+  <p><b>Platform:</b> <span id="platform"></span></p>
+  <p><b>Architecture:</b> <span id="arch"></span></p>
+  <p><b>Browser:</b> <span id="browser"></span></p>
+  <p><b>Screen Resolution:</b> <span id="screen"></span></p>
+  <p><b>Pixel Ratio:</b> <span id="pixel"></span></p>
+</section>
 
-<div class="card">
-<h2>📱 Telegram</h2>
-<p><b>Platform:</b> <span id="tg-platform"></span></p>
-<p><b>Language:</b> <span id="tg-lang"></span></p>
-<p><b>Dark Mode:</b> <span id="tg-dark"></span></p>
-<p><b>Username:</b> <span id="tg-user"></span></p>
-<p><b>Premium:</b> <span id="tg-premium"></span></p>
-</div>
+<section class="card notice">
+  <h2>Privacy & Security Notes</h2>
+  <ul>
+    <li>No hardware identifiers (MAC address, device name) are accessible in browser environments.</li>
+    <li>All network data is derived from public IP information.</li>
+    <li>Location data is approximate and IP-based.</li>
+  </ul>
+</section>
 
-
-<div class="card">
-<h2>🖥 Device</h2>
-<p><b>Device Type:</b> <span id="device"></span></p>
-<p><b>OS:</b> <span id="os"></span></p>
-<p><b>Browser:</b> <span id="browser"></span></p>
-<p><b>Screen:</b> <span id="screen"></span></p>
-<p><b>Pixel Ratio:</b> <span id="pixel"></span></p>
-</div>
-
-
-<div class="card">
-<h2>🌍 Environment</h2>
-<p><b>Local Time:</b> <span id="time"></span></p>
-<p><b>Language:</b> <span id="lang"></span></p>
-<p><b>Network Type:</b> <span id="net"></span></p>
-</div>
-
-
-<button id="send">📤 Send to Bot</button>
-
+<button id="send">Send Summary to Bot</button>
 
 <script src="script.js"></script>
 </body>
