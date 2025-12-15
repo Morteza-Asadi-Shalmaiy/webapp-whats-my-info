@@ -1,56 +1,48 @@
-const tg = Telegram.WebApp;
-tg.expand();
+// IPv4
+fetch("https://api.ipify.org?format=json")
+  .then(r => r.json())
+  .then(d => document.getElementById("ipv4").innerText = d.ip)
+  .catch(() => document.getElementById("ipv4").innerText = "Unavailable");
 
+// IPv6
+fetch("https://api64.ipify.org?format=json")
+  .then(r => r.json())
+  .then(d => document.getElementById("ipv6").innerText = d.ip)
+  .catch(() => document.getElementById("ipv6").innerText = "Not supported");
 
-// 🌐 IP info
-async function loadIP() {
-const res = await fetch("https://ipapi.co/json/");
-const d = await res.json();
+// IP Information
+fetch("https://ipapi.co/json/")
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById("isp").innerText = d.org || "—";
+    document.getElementById("asn").innerText = d.asn || "—";
+    document.getElementById("city").innerText = d.city || "—";
+    document.getElementById("region").innerText = d.region || "—";
+    document.getElementById("country").innerText = `${d.country_name} (${d.country_code})`;
+    document.getElementById("lat").innerText = d.latitude;
+    document.getElementById("lon").innerText = d.longitude;
+    document.getElementById("timezone").innerText = d.timezone;
+  });
 
-
-document.getElementById("ip").innerText = d.ip;
-document.getElementById("isp").innerText = d.org;
-document.getElementById("country").innerText = `${d.country_name} (${d.country_code})`;
-document.getElementById("city").innerText = d.city;
-document.getElementById("timezone").innerText = d.timezone;
-
-
-window.collected = { ip: d.ip, country: d.country_name, city: d.city };
-}
-
-
-// 📱 Telegram info
-const user = tg.initDataUnsafe?.user;
-document.getElementById("tg-platform").innerText = tg.platform;
-document.getElementById("tg-lang").innerText = user?.language_code || "unknown";
-document.getElementById("tg-dark").innerText = tg.colorScheme;
-document.getElementById("tg-user").innerText = user?.username || "—";
-document.getElementById("tg-premium").innerText = user?.is_premium ? "Yes" : "No";
-
-
-// 🖥 Device info
+// System info
 const ua = navigator.userAgent;
-document.getElementById("device").innerText = /Mobi/.test(ua) ? "Mobile" : "Desktop";
-document.getElementById("os").innerText = navigator.platform;
+
+document.getElementById("os").innerText = ua.includes("Windows") ? "Windows" : "Other";
+document.getElementById("platform").innerText = navigator.platform;
+document.getElementById("arch").innerText = navigator.userAgentData?.architecture || "Unknown";
 document.getElementById("browser").innerText = ua;
-document.getElementById("screen").innerText = `${screen.width} x ${screen.height}`;
+document.getElementById("screen").innerText = `${screen.width} × ${screen.height}`;
 document.getElementById("pixel").innerText = window.devicePixelRatio;
 
-
-// 🌍 Environment
-document.getElementById("time").innerText = new Date().toLocaleString();
-document.getElementById("lang").innerText = navigator.language;
-document.getElementById("net").innerText = navigator.connection?.effectiveType || "unknown";
-
-
-// 📤 Send to bot
-document.getElementById("send").onclick = () => {
-tg.sendData(JSON.stringify({
-ip: document.getElementById("ip").innerText,
-platform: tg.platform,
-device: document.getElementById("device").innerText
-}));
-};
-
-
-loadIP();
+// Send summary to bot
+const sendBtn = document.getElementById("send");
+if (tg && sendBtn) {
+  sendBtn.onclick = () => {
+    tg.sendData(JSON.stringify({
+      ipv4: document.getElementById("ipv4").innerText,
+      ipv6: document.getElementById("ipv6").innerText,
+      isp: document.getElementById("isp").innerText,
+      os: document.getElementById("os").innerText
+    }));
+  };
+}
