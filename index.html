@@ -1,60 +1,653 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>System & Network Information</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's My Info</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-card: #ffffff;
+            --text-primary: #1f1f1f;
+            --text-secondary: #616161;
+            --border-color: #e0e0e0;
+            --accent: #0078d4;
+            --accent-hover: #106ebe;
+            --success: #107c10;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --shadow-hover: rgba(0, 0, 0, 0.15);
+        }
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css">
+        [data-theme="dark"] {
+            --bg-primary: #1f1f1f;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: #3d3d3d;
+            --accent: #60cdff;
+            --accent-hover: #4db8ff;
+            --success: #6ccb5f;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-hover: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .header {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 140px 1fr auto;
+            align-items: start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            gap: 15px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+            word-break: break-word;
+            text-align: right;
+        }
+
+        .value-with-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 12px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .ipv6-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .ipv6-toggle:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        #map-container {
+            grid-column: 1 / -1;
+            height: 400px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .loading {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px var(--shadow-hover);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
 </head>
-<body>
+<body data-theme="light">
+    <div class="header">
+        <h1>🌐 What's My Info</h1>
+        <div class="controls">
+            <button class="btn" id="export-btn">📥 Export JSON</button>
+            <button class="btn theme-toggle" id="theme-toggle">🌙</button>
+        </div>
+    </div>
 
-<h1>System & Network Information</h1>
+    <div class="container">
+        <div class="card">
+            <div class="card-title">🌍 Network Information</div>
+            <div class="info-row">
+                <span class="info-label">IPv4 Address:</span>
+                <span class="info-value" id="ipv4">Loading...</span>
+                <button class="copy-btn" data-copy="ipv4">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">IPv6 Address:</span>
+                <div class="value-with-toggle">
+                    <span class="info-value" id="ipv6">Loading...</span>
+                    <button class="ipv6-toggle" id="ipv6-toggle">Compress</button>
+                </div>
+                <button class="copy-btn" data-copy="ipv6">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">ISP:</span>
+                <span class="info-value" id="isp">Loading...</span>
+                <button class="copy-btn" data-copy="isp">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">ASN:</span>
+                <span class="info-value" id="asn">Loading...</span>
+                <button class="copy-btn" data-copy="asn">Copy</button>
+            </div>
+        </div>
 
-<section class="card">
-  <h2>Public IP Addresses</h2>
-  <p><b>IPv4:</b> <span id="ipv4">Loading...</span></p>
-  <p><b>IPv6:</b> <span id="ipv6">Not available</span></p>
-</section>
+        <div class="card">
+            <div class="card-title">📍 Location</div>
+            <div class="info-row">
+                <span class="info-label">City:</span>
+                <span class="info-value" id="city">Loading...</span>
+                <button class="copy-btn" data-copy="city">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Region:</span>
+                <span class="info-value" id="region">Loading...</span>
+                <button class="copy-btn" data-copy="region">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Country:</span>
+                <span class="info-value" id="country">Loading...</span>
+                <button class="copy-btn" data-copy="country">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Coordinates:</span>
+                <span class="info-value" id="coordinates">Loading...</span>
+                <button class="copy-btn" data-copy="coordinates">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Timezone:</span>
+                <span class="info-value" id="timezone">Loading...</span>
+                <button class="copy-btn" data-copy="timezone">Copy</button>
+            </div>
+        </div>
 
-<section class="card">
-  <h2>IP Information</h2>
-  <p><b>ISP / Organization:</b> <span id="isp"></span></p>
-  <p><b>ASN:</b> <span id="asn"></span></p>
-  <p><b>City:</b> <span id="city"></span></p>
-  <p><b>Region:</b> <span id="region"></span></p>
-  <p><b>Country:</b> <span id="country"></span></p>
-</section>
+        <div class="card">
+            <div class="card-title">🖥 System Information</div>
+            <div class="info-row">
+                <span class="info-label">Operating System:</span>
+                <span class="info-value" id="os">Loading...</span>
+                <button class="copy-btn" data-copy="os">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Browser:</span>
+                <span class="info-value" id="browser">Loading...</span>
+                <button class="copy-btn" data-copy="browser">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Screen Resolution:</span>
+                <span class="info-value" id="screen">Loading...</span>
+                <button class="copy-btn" data-copy="screen">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Platform:</span>
+                <span class="info-value" id="platform">Loading...</span>
+                <button class="copy-btn" data-copy="platform">Copy</button>
+            </div>
+        </div>
 
-<section class="card">
-  <h2>Geolocation (IP-based, Approximate)</h2>
-  <p><b>Latitude:</b> <span id="lat"></span></p>
-  <p><b>Longitude:</b> <span id="lon"></span></p>
-  <p><b>Timezone:</b> <span id="timezone"></span></p>
-</section>
+        <div class="card">
+            <div class="card-title">⚙️ Environment</div>
+            <div class="info-row">
+                <span class="info-label">Local Time:</span>
+                <span class="info-value" id="local-time">Loading...</span>
+                <button class="copy-btn" data-copy="local-time">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Language:</span>
+                <span class="info-value" id="language">Loading...</span>
+                <button class="copy-btn" data-copy="language">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Network Type:</span>
+                <span class="info-value" id="network-type">Loading...</span>
+                <button class="copy-btn" data-copy="network-type">Copy</button>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Pixel Ratio:</span>
+                <span class="info-value" id="pixel-ratio">Loading...</span>
+                <button class="copy-btn" data-copy="pixel-ratio">Copy</button>
+            </div>
+        </div>
 
-<section class="card">
-  <h2>System Environment</h2>
-  <p><b>Operating System:</b> <span id="os"></span></p>
-  <p><b>Platform:</b> <span id="platform"></span></p>
-  <p><b>Architecture:</b> <span id="arch"></span></p>
-  <p><b>Browser:</b> <span id="browser"></span></p>
-  <p><b>Screen Resolution:</b> <span id="screen"></span></p>
-  <p><b>Pixel Ratio:</b> <span id="pixel"></span></p>
-</section>
+        <div class="card" id="map-container">
+            <div class="card-title">🗺 Location Map</div>
+            <iframe id="map" loading="lazy"></iframe>
+        </div>
+    </div>
 
-<section class="card notice">
-  <h2>Privacy & Security Notes</h2>
-  <ul>
-    <li>No hardware identifiers (MAC address, device name) are accessible in browser environments.</li>
-    <li>All network data is derived from public IP information.</li>
-    <li>Location data is approximate and IP-based.</li>
-  </ul>
-</section>
+    <div class="toast" id="toast">Copied to clipboard!</div>
 
-<button id="send">Send Summary to Bot</button>
+    <script>
+        // Data storage
+        const appData = {};
+        let ipv6Expanded = true;
 
-<script src="script.js"></script>
+        // Auto-detect system theme preference
+        function getPreferredTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) return savedTheme;
+            
+            // Auto-detect system preference
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        }
+
+        // Theme handling
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        const initialTheme = getPreferredTheme();
+        html.setAttribute('data-theme', initialTheme);
+        themeToggle.textContent = initialTheme === 'dark' ? '☀️' : '🌙';
+
+        // Listen for system theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    html.setAttribute('data-theme', newTheme);
+                    themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                }
+            });
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Copy to clipboard
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const targetId = btn.getAttribute('data-copy');
+                const text = document.getElementById(targetId).textContent;
+                
+                try {
+                    await navigator.clipboard.writeText(text);
+                    btn.textContent = '✓ Copied';
+                    btn.classList.add('copied');
+                    showToast();
+                    
+                    setTimeout(() => {
+                        btn.textContent = 'Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Copy failed:', err);
+                }
+            });
+        });
+
+        // IPv6 toggle
+        function compressIPv6(ipv6) {
+            return ipv6.replace(/\b0+/g, '').replace(/:{2,}/g, '::');
+        }
+
+        function expandIPv6(ipv6) {
+            if (!ipv6.includes('::')) return ipv6;
+            
+            const sides = ipv6.split('::');
+            const left = sides[0] ? sides[0].split(':') : [];
+            const right = sides[1] ? sides[1].split(':') : [];
+            const missing = 8 - (left.length + right.length);
+            const middle = Array(missing).fill('0000');
+            
+            return [...left, ...middle, ...right]
+                .map(seg => seg.padStart(4, '0'))
+                .join(':');
+        }
+
+        document.getElementById('ipv6-toggle').addEventListener('click', () => {
+            const ipv6El = document.getElementById('ipv6');
+            const toggleBtn = document.getElementById('ipv6-toggle');
+            const currentIpv6 = ipv6El.textContent;
+            
+            if (ipv6Expanded) {
+                ipv6El.textContent = compressIPv6(currentIpv6);
+                toggleBtn.textContent = 'Expand';
+            } else {
+                ipv6El.textContent = expandIPv6(currentIpv6);
+                toggleBtn.textContent = 'Compress';
+            }
+            
+            ipv6Expanded = !ipv6Expanded;
+        });
+
+        // Export JSON
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `my-info-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Fetch IPv4
+        async function fetchIPv4() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                document.getElementById('ipv4').textContent = data.ip;
+                appData.ipv4 = data.ip;
+                return data.ip;
+            } catch (err) {
+                document.getElementById('ipv4').textContent = 'Unavailable';
+                console.error('IPv4 fetch error:', err);
+            }
+        }
+
+        // Fetch IPv6
+        async function fetchIPv6() {
+            try {
+                const res = await fetch('https://api64.ipify.org?format=json');
+                const data = await res.json();
+                const ipv6 = data.ip.includes(':') ? data.ip : 'Not available';
+                document.getElementById('ipv6').textContent = ipv6;
+                appData.ipv6 = ipv6;
+            } catch (err) {
+                document.getElementById('ipv6').textContent = 'Unavailable';
+                console.error('IPv6 fetch error:', err);
+            }
+        }
+
+        // Fetch IP metadata using ipwho.is
+        async function fetchIPMetadata() {
+            try {
+                const res = await fetch('https://ipwho.is/');
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('isp').textContent = data.connection?.org || 'Unknown';
+                    document.getElementById('asn').textContent = data.connection?.asn || 'Unknown';
+                    document.getElementById('city').textContent = data.city || 'Unknown';
+                    document.getElementById('region').textContent = data.region || 'Unknown';
+                    
+                    // Format country name on separate line with code
+                    const countryText = `${data.country}\n(${data.country_code})`;
+                    document.getElementById('country').textContent = countryText;
+                    document.getElementById('country').style.whiteSpace = 'pre-line';
+                    
+                    document.getElementById('coordinates').textContent = `${data.latitude}, ${data.longitude}`;
+                    document.getElementById('timezone').textContent = data.timezone?.id || 'Unknown';
+                    
+                    appData.isp = data.connection?.org;
+                    appData.asn = data.connection?.asn;
+                    appData.city = data.city;
+                    appData.region = data.region;
+                    appData.country = data.country;
+                    appData.countryCode = data.country_code;
+                    appData.latitude = data.latitude;
+                    appData.longitude = data.longitude;
+                    appData.timezone = data.timezone?.id;
+                    
+                    // Update map
+                    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.1},${data.latitude-0.1},${data.longitude+0.1},${data.latitude+0.1}&layer=mapnik&marker=${data.latitude},${data.longitude}`;
+                    document.getElementById('map').src = mapUrl;
+                }
+            } catch (err) {
+                console.error('Metadata fetch error:', err);
+            }
+        }
+
+        // System info
+        function detectOS() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Win')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Edg')) return 'Edge';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+            return 'Unknown';
+        }
+
+        function populateSystemInfo() {
+            const os = detectOS();
+            const browser = detectBrowser();
+            const screen = `${window.screen.width} × ${window.screen.height}`;
+            const platform = navigator.platform;
+            
+            document.getElementById('os').textContent = os;
+            document.getElementById('browser').textContent = browser;
+            document.getElementById('screen').textContent = screen;
+            document.getElementById('platform').textContent = platform;
+            
+            appData.os = os;
+            appData.browser = browser;
+            appData.screen = screen;
+            appData.platform = platform;
+        }
+
+        function populateEnvironment() {
+            const localTime = new Date().toLocaleString();
+            const language = navigator.language;
+            const networkType = navigator.connection?.effectiveType || 'Unknown';
+            const pixelRatio = window.devicePixelRatio;
+            
+            document.getElementById('local-time').textContent = localTime;
+            document.getElementById('language').textContent = language;
+            document.getElementById('network-type').textContent = networkType;
+            document.getElementById('pixel-ratio').textContent = pixelRatio;
+            
+            appData.localTime = localTime;
+            appData.language = language;
+            appData.networkType = networkType;
+            appData.pixelRatio = pixelRatio;
+        }
+
+        // Initialize
+        async function init() {
+            populateSystemInfo();
+            populateEnvironment();
+            await Promise.all([
+                fetchIPv4(),
+                fetchIPv6(),
+                fetchIPMetadata()
+            ]);
+        }
+
+        init();
+    </script>
 </body>
 </html>
