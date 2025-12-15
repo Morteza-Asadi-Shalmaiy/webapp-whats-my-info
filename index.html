@@ -5,526 +5,639 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>What's My Info</title>
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f5;
-            --bg-card: #ffffff;
-            --text-primary: #1f1f1f;
-            --text-secondary: #616161;
-            --border-color: #e0e0e0;
-            --accent: #0078d4;
-            --accent-hover: #106ebe;
-            --success: #107c10;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --shadow-hover: rgba(0, 0, 0, 0.15);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1f1f1f;
-            --bg-secondary: #2d2d2d;
-            --bg-card: #252525;
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --border-color: #3d3d3d;
-            --accent: #60cdff;
-            --accent-hover: #4db8ff;
-            --success: #6ccb5f;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --shadow-hover: rgba(0, 0, 0, 0.4);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --text-label: #999;
+            --accent: #0078d4;
+            --success: #107c10;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(30, 30, 30, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-label: #777;
+            --accent: #60cdff;
+            --success: #6ccb5f;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            padding: 20px;
-            transition: background 0.3s, color 0.3s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
         }
 
-        .header {
-            max-width: 1200px;
-            margin: 0 auto 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        /* Desktop only styles */
+        @media (min-width: 769px) {
+            /* Map background */
+            #map-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                border: none;
+            }
 
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+            /* Overlay for better readability */
+            #map-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 2;
+                backdrop-filter: blur(2px);
+            }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+            [data-theme="dark"] #map-overlay {
+                background: rgba(0, 0, 0, 0.5);
+            }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            background: var(--accent);
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px var(--shadow);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .theme-toggle {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 24px;
-            box-shadow: 0 2px 4px var(--shadow);
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 12px var(--shadow-hover);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-row {
-            display: grid;
-            grid-template-columns: 140px 1fr auto;
-            align-items: start;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-            gap: 15px;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-weight: 500;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .info-value {
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 14px;
-            word-break: break-word;
-            text-align: right;
-        }
-
-        .value-with-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 12px;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .copy-btn:hover {
-            background: var(--bg-secondary);
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .copy-btn.copied {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .ipv6-toggle {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            color: var(--text-primary);
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .ipv6-toggle:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        #map-container {
-            grid-column: 1 / -1;
-            height: 400px;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .loading {
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--success);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px var(--shadow-hover);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @media (max-width: 968px) {
+            /* Main container */
             .container {
-                grid-template-columns: 1fr;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 3;
+                width: 90%;
+                max-width: 800px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Glass card */
+            .card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px) saturate(180%);
+                border: 1px solid var(--glass-border);
+                border-radius: 16px;
+                padding: 40px;
+                box-shadow: 0 8px 32px var(--shadow);
+            }
+
+            /* Top controls */
+            .top-controls {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 4;
+                display: flex;
+                gap: 12px;
+            }
+
+            .control-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                border: 1px solid var(--glass-border);
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                color: var(--text-primary);
+                font-size: 20px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                box-shadow: 0 4px 12px var(--shadow);
+            }
+
+            .control-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px var(--shadow);
+            }
+
+            /* Map drawer */
+            #map-drawer {
+                position: fixed;
+                bottom: -100%;
+                left: 0;
+                width: 100%;
+                height: 90vh;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border-top: 1px solid var(--glass-border);
+                border-radius: 24px 24px 0 0;
+                z-index: 5;
+                transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 -8px 32px var(--shadow);
+                padding: 20px;
+            }
+
+            #map-drawer.open {
+                bottom: 0;
+            }
+
+            #map-drawer-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 1px solid var(--glass-border);
+                background: var(--glass-bg);
+                color: var(--text-primary);
+                font-size: 24px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+            }
+
+            #map-drawer-close:hover {
+                background: var(--accent);
+                color: white;
+            }
+
+            #map-drawer iframe {
+                width: 100%;
+                height: calc(100% - 60px);
+                border: none;
+                border-radius: 12px;
+                margin-top: 60px;
+            }
+
+            .map-toggle {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 4;
+                padding: 14px 28px;
+                border-radius: 30px;
+                border: 1px solid var(--glass-border);
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                color: var(--text-primary);
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.2s;
+                box-shadow: 0 4px 16px var(--shadow);
+            }
+
+            .map-toggle:hover {
+                transform: translateX(-50%) translateY(-2px);
+                box-shadow: 0 6px 20px var(--shadow);
+            }
+
+            /* Header */
+            .header {
+                text-align: center;
+                margin-bottom: 32px;
+            }
+
+            .header-title {
+                font-size: 14px;
+                color: var(--text-label);
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .ip-display {
+                font-size: 48px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .ip-display:hover {
+                color: var(--accent);
+            }
+
+            .ip-badge {
+                display: inline-block;
+                padding: 4px 12px;
+                background: rgba(255, 59, 48, 0.1);
+                color: #ff3b30;
+                border: 1px solid rgba(255, 59, 48, 0.3);
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            /* Info sections */
+            .info-section {
+                margin-bottom: 32px;
+            }
+
+            .info-section:last-child {
+                margin-bottom: 0;
+            }
+
+            .section-title {
+                font-size: 12px;
+                color: var(--text-label);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 12px;
+            }
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .info-grid-3 {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .info-item {
+                cursor: pointer;
+                transition: all 0.2s;
+                padding: 4px;
+                border-radius: 6px;
+            }
+
+            .info-item:hover {
+                background: rgba(0, 120, 212, 0.05);
+            }
+
+            .info-item.copied {
+                background: rgba(16, 124, 16, 0.1);
+            }
+
+            .info-label {
+                font-size: 13px;
+                color: var(--text-label);
+                margin-bottom: 4px;
+            }
+
+            .info-value {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            .divider {
+                height: 1px;
+                background: var(--glass-border);
+                margin: 32px 0;
+            }
+
+            /* Toast */
+            .toast {
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background: var(--success);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 30px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 6;
+                opacity: 0;
+                transition: all 0.3s;
+                box-shadow: 0 4px 16px var(--shadow);
+            }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
         }
 
+        /* Mobile styles */
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
+            body {
+                background: var(--text-primary);
+                padding: 20px;
+                overflow-y: auto;
+                height: auto;
             }
-            
-            .info-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
+
+            .mobile-placeholder {
+                color: var(--text-secondary);
+                text-align: center;
+                padding: 60px 20px;
             }
-            
-            .info-value {
-                text-align: left;
+
+            .mobile-placeholder h1 {
+                font-size: 24px;
+                margin-bottom: 16px;
+            }
+
+            .mobile-placeholder p {
+                font-size: 16px;
+                line-height: 1.6;
+            }
+
+            /* Hide desktop elements on mobile */
+            #map-background,
+            #map-overlay,
+            .container,
+            .top-controls,
+            .map-toggle,
+            #map-drawer,
+            .toast {
+                display: none !important;
             }
         }
     </style>
 </head>
 <body data-theme="light">
-    <div class="header">
-        <h1>🌐 What's My Info</h1>
-        <div class="controls">
-            <button class="btn" id="export-btn">📥 Export JSON</button>
-            <button class="btn theme-toggle" id="theme-toggle">🌙</button>
-        </div>
+    <!-- Desktop version -->
+    <iframe id="map-background" loading="lazy"></iframe>
+    <div id="map-overlay"></div>
+
+    <div class="top-controls">
+        <button class="control-btn" id="export-btn" title="Export JSON">📥</button>
+        <button class="control-btn" id="theme-toggle" title="Toggle theme">🌙</button>
     </div>
 
     <div class="container">
         <div class="card">
-            <div class="card-title">🌍 Network Information</div>
-            <div class="info-row">
-                <span class="info-label">IPv4 Address:</span>
-                <span class="info-value" id="ipv4">Loading...</span>
-                <button class="copy-btn" data-copy="ipv4">Copy</button>
+            <div class="header">
+                <div class="header-title">Your Public IP Address</div>
+                <div class="ip-display" id="ipv4-display" title="Click to copy">Loading...</div>
+                <span class="ip-badge">EXPOSED</span>
             </div>
-            <div class="info-row">
-                <span class="info-label">IPv6 Address:</span>
-                <div class="value-with-toggle">
-                    <span class="info-value" id="ipv6">Loading...</span>
-                    <button class="ipv6-toggle" id="ipv6-toggle">Compress</button>
+
+            <div class="info-section">
+                <div class="info-grid">
+                    <div class="info-item" data-value="connection-type">
+                        <div class="info-label">Connection type</div>
+                        <div class="info-value" id="network-type">📡 Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="location">
+                        <div class="info-label">Location</div>
+                        <div class="info-value" id="location">📍 Loading...</div>
+                    </div>
                 </div>
-                <button class="copy-btn" data-copy="ipv6">Copy</button>
             </div>
-            <div class="info-row">
-                <span class="info-label">ISP:</span>
-                <span class="info-value" id="isp">Loading...</span>
-                <button class="copy-btn" data-copy="isp">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">ASN:</span>
-                <span class="info-value" id="asn">Loading...</span>
-                <button class="copy-btn" data-copy="asn">Copy</button>
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">📍 Location</div>
-            <div class="info-row">
-                <span class="info-label">City:</span>
-                <span class="info-value" id="city">Loading...</span>
-                <button class="copy-btn" data-copy="city">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Region:</span>
-                <span class="info-value" id="region">Loading...</span>
-                <button class="copy-btn" data-copy="region">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Country:</span>
-                <span class="info-value" id="country">Loading...</span>
-                <button class="copy-btn" data-copy="country">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Coordinates:</span>
-                <span class="info-value" id="coordinates">Loading...</span>
-                <button class="copy-btn" data-copy="coordinates">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Timezone:</span>
-                <span class="info-value" id="timezone">Loading...</span>
-                <button class="copy-btn" data-copy="timezone">Copy</button>
-            </div>
-        </div>
+            <div class="divider"></div>
 
-        <div class="card">
-            <div class="card-title">🖥 System Information</div>
-            <div class="info-row">
-                <span class="info-label">Operating System:</span>
-                <span class="info-value" id="os">Loading...</span>
-                <button class="copy-btn" data-copy="os">Copy</button>
+            <div class="info-section">
+                <div class="section-title">Network Details</div>
+                <div class="info-grid">
+                    <div class="info-item" data-value="isp">
+                        <div class="info-label">ISP</div>
+                        <div class="info-value" id="isp">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="ipv6">
+                        <div class="info-label">IPv6 Address</div>
+                        <div class="info-value" id="ipv6">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="asn">
+                        <div class="info-label">ASN</div>
+                        <div class="info-value" id="asn">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="timezone">
+                        <div class="info-label">Timezone</div>
+                        <div class="info-value" id="timezone">Loading...</div>
+                    </div>
+                </div>
             </div>
-            <div class="info-row">
-                <span class="info-label">Browser:</span>
-                <span class="info-value" id="browser">Loading...</span>
-                <button class="copy-btn" data-copy="browser">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Screen Resolution:</span>
-                <span class="info-value" id="screen">Loading...</span>
-                <button class="copy-btn" data-copy="screen">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Platform:</span>
-                <span class="info-value" id="platform">Loading...</span>
-                <button class="copy-btn" data-copy="platform">Copy</button>
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="card-title">⚙️ Environment</div>
-            <div class="info-row">
-                <span class="info-label">Local Time:</span>
-                <span class="info-value" id="local-time">Loading...</span>
-                <button class="copy-btn" data-copy="local-time">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Language:</span>
-                <span class="info-value" id="language">Loading...</span>
-                <button class="copy-btn" data-copy="language">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Network Type:</span>
-                <span class="info-value" id="network-type">Loading...</span>
-                <button class="copy-btn" data-copy="network-type">Copy</button>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Pixel Ratio:</span>
-                <span class="info-value" id="pixel-ratio">Loading...</span>
-                <button class="copy-btn" data-copy="pixel-ratio">Copy</button>
-            </div>
-        </div>
+            <div class="divider"></div>
 
-        <div class="card" id="map-container">
-            <div class="card-title">🗺 Location Map</div>
-            <iframe id="map" loading="lazy"></iframe>
+            <div class="info-section">
+                <div class="section-title">Device Information</div>
+                <div class="info-grid-3">
+                    <div class="info-item" data-value="device">
+                        <div class="info-label">Device type</div>
+                        <div class="info-value" id="device">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="os">
+                        <div class="info-label">Operating system</div>
+                        <div class="info-value" id="os">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="screen">
+                        <div class="info-label">Screen resolution</div>
+                        <div class="info-value" id="screen">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="info-section">
+                <div class="info-grid-3">
+                    <div class="info-item" data-value="browser">
+                        <div class="info-label">Browser</div>
+                        <div class="info-value" id="browser">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="language">
+                        <div class="info-label">Language</div>
+                        <div class="info-value" id="language">Loading...</div>
+                    </div>
+                    <div class="info-item" data-value="pixel-ratio">
+                        <div class="info-label">Pixel ratio</div>
+                        <div class="info-value" id="pixel-ratio">Loading...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="toast" id="toast">Copied to clipboard!</div>
+    <button class="map-toggle" id="map-toggle">🗺 View Full Map</button>
+
+    <div id="map-drawer">
+        <button id="map-drawer-close">×</button>
+        <iframe id="map-interactive" loading="lazy"></iframe>
+    </div>
+
+    <div class="toast" id="toast">✓ Copied to clipboard</div>
+
+    <!-- Mobile placeholder -->
+    <div class="mobile-placeholder">
+        <h1>📱 Mobile Version</h1>
+        <p>The mobile-optimized version is coming soon. For now, please use a desktop browser to access all features.</p>
+    </div>
 
     <script>
-        // Data storage
         const appData = {};
-        let ipv6Expanded = true;
-
-        // Auto-detect system theme preference
-        function getPreferredTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) return savedTheme;
-            
-            // Auto-detect system preference
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                return 'dark';
-            }
-            return 'light';
-        }
 
         // Theme handling
+        function getPreferredTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved) return saved;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
         const themeToggle = document.getElementById('theme-toggle');
         const html = document.documentElement;
+        const body = document.body;
         
         const initialTheme = getPreferredTheme();
-        html.setAttribute('data-theme', initialTheme);
-        themeToggle.textContent = initialTheme === 'dark' ? '☀️' : '🌙';
+        body.setAttribute('data-theme', initialTheme);
+        if (themeToggle) themeToggle.textContent = initialTheme === 'dark' ? '☀️' : '🌙';
 
-        // Listen for system theme changes
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                if (!localStorage.getItem('theme')) {
-                    const newTheme = e.matches ? 'dark' : 'light';
-                    html.setAttribute('data-theme', newTheme);
-                    themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-                }
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const current = body.getAttribute('data-theme');
+                const newTheme = current === 'light' ? 'dark' : 'light';
+                body.setAttribute('data-theme', newTheme);
+                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                localStorage.setItem('theme', newTheme);
             });
         }
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Copy to clipboard
+        // Toast notification
         function showToast() {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const targetId = btn.getAttribute('data-copy');
-                const text = document.getElementById(targetId).textContent;
-                
-                try {
-                    await navigator.clipboard.writeText(text);
-                    btn.textContent = '✓ Copied';
-                    btn.classList.add('copied');
-                    showToast();
-                    
-                    setTimeout(() => {
-                        btn.textContent = 'Copy';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Copy failed:', err);
-                }
+        // Copy to clipboard
+        async function copyToClipboard(text, element) {
+            try {
+                await navigator.clipboard.writeText(text);
+                element.classList.add('copied');
+                showToast();
+                setTimeout(() => element.classList.remove('copied'), 2000);
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+        }
+
+        // Click to copy functionality
+        document.querySelectorAll('.info-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const valueEl = item.querySelector('.info-value');
+                const text = valueEl.textContent.replace(/^[📡📍]\s*/, ''); // Remove emoji prefix
+                copyToClipboard(text, item);
             });
         });
 
-        // IPv6 toggle
-        function compressIPv6(ipv6) {
-            return ipv6.replace(/\b0+/g, '').replace(/:{2,}/g, '::');
+        // IP display click to copy
+        const ipDisplay = document.getElementById('ipv4-display');
+        if (ipDisplay) {
+            ipDisplay.addEventListener('click', () => {
+                copyToClipboard(ipDisplay.textContent, ipDisplay);
+            });
         }
 
-        function expandIPv6(ipv6) {
-            if (!ipv6.includes('::')) return ipv6;
-            
-            const sides = ipv6.split('::');
-            const left = sides[0] ? sides[0].split(':') : [];
-            const right = sides[1] ? sides[1].split(':') : [];
-            const missing = 8 - (left.length + right.length);
-            const middle = Array(missing).fill('0000');
-            
-            return [...left, ...middle, ...right]
-                .map(seg => seg.padStart(4, '0'))
-                .join(':');
-        }
+        // Map drawer
+        const mapToggle = document.getElementById('map-toggle');
+        const mapDrawer = document.getElementById('map-drawer');
+        const mapDrawerClose = document.getElementById('map-drawer-close');
 
-        document.getElementById('ipv6-toggle').addEventListener('click', () => {
-            const ipv6El = document.getElementById('ipv6');
-            const toggleBtn = document.getElementById('ipv6-toggle');
-            const currentIpv6 = ipv6El.textContent;
-            
-            if (ipv6Expanded) {
-                ipv6El.textContent = compressIPv6(currentIpv6);
-                toggleBtn.textContent = 'Expand';
-            } else {
-                ipv6El.textContent = expandIPv6(currentIpv6);
-                toggleBtn.textContent = 'Compress';
-            }
-            
-            ipv6Expanded = !ipv6Expanded;
-        });
+        if (mapToggle && mapDrawer && mapDrawerClose) {
+            mapToggle.addEventListener('click', () => {
+                mapDrawer.classList.add('open');
+            });
+
+            mapDrawerClose.addEventListener('click', () => {
+                mapDrawer.classList.remove('open');
+            });
+        }
 
         // Export JSON
-        document.getElementById('export-btn').addEventListener('click', () => {
-            const dataStr = JSON.stringify(appData, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `my-info-${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
+        const exportBtn = document.getElementById('export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                const dataStr = JSON.stringify(appData, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `my-info-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        // Detect OS
+        function detectOS() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Win')) return 'Windows';
+            if (ua.includes('Mac')) return 'macOS';
+            if (ua.includes('Linux')) return 'Linux';
+            if (ua.includes('Android')) return 'Android';
+            if (ua.includes('iOS')) return 'iOS';
+            return 'Unknown';
+        }
+
+        // Detect browser
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Firefox')) return 'Firefox';
+            if (ua.includes('Edg')) return 'Edge';
+            if (ua.includes('Chrome')) return 'Chrome';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+            return 'Unknown';
+        }
+
+        // Detect device type
+        function detectDevice() {
+            const ua = navigator.userAgent;
+            if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) return 'Tablet';
+            if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) return 'Mobile';
+            return 'PC';
+        }
+
+        // Populate system info
+        function populateSystemInfo() {
+            const os = detectOS();
+            const browser = detectBrowser();
+            const device = detectDevice();
+            const screen = `${window.screen.width}×${window.screen.height}`;
+            const language = navigator.language;
+            const pixelRatio = window.devicePixelRatio;
+            const networkType = navigator.connection?.effectiveType || 'Unknown';
+            
+            document.getElementById('os').textContent = os;
+            document.getElementById('browser').textContent = browser;
+            document.getElementById('device').textContent = device;
+            document.getElementById('screen').textContent = screen;
+            document.getElementById('language').textContent = language;
+            document.getElementById('pixel-ratio').textContent = pixelRatio;
+            document.getElementById('network-type').textContent = `📡 ${networkType}`;
+            
+            appData.os = os;
+            appData.browser = browser;
+            appData.device = device;
+            appData.screen = screen;
+            appData.language = language;
+            appData.pixelRatio = pixelRatio;
+            appData.networkType = networkType;
+        }
 
         // Fetch IPv4
         async function fetchIPv4() {
             try {
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
-                document.getElementById('ipv4').textContent = data.ip;
+                document.getElementById('ipv4-display').textContent = data.ip;
                 appData.ipv4 = data.ip;
                 return data.ip;
             } catch (err) {
-                document.getElementById('ipv4').textContent = 'Unavailable';
+                document.getElementById('ipv4-display').textContent = 'Unavailable';
                 console.error('IPv4 fetch error:', err);
             }
         }
@@ -543,103 +656,42 @@
             }
         }
 
-        // Fetch IP metadata using ipwho.is
+        // Fetch IP metadata
         async function fetchIPMetadata() {
             try {
                 const res = await fetch('https://ipwho.is/');
                 const data = await res.json();
                 
                 if (data.success) {
+                    const location = `📍 ${data.city}, ${data.country}`;
+                    document.getElementById('location').textContent = location;
                     document.getElementById('isp').textContent = data.connection?.org || 'Unknown';
                     document.getElementById('asn').textContent = data.connection?.asn || 'Unknown';
-                    document.getElementById('city').textContent = data.city || 'Unknown';
-                    document.getElementById('region').textContent = data.region || 'Unknown';
-                    
-                    // Format country name on separate line with code
-                    const countryText = `${data.country}\n(${data.country_code})`;
-                    document.getElementById('country').textContent = countryText;
-                    document.getElementById('country').style.whiteSpace = 'pre-line';
-                    
-                    document.getElementById('coordinates').textContent = `${data.latitude}, ${data.longitude}`;
                     document.getElementById('timezone').textContent = data.timezone?.id || 'Unknown';
                     
-                    appData.isp = data.connection?.org;
-                    appData.asn = data.connection?.asn;
                     appData.city = data.city;
                     appData.region = data.region;
                     appData.country = data.country;
                     appData.countryCode = data.country_code;
                     appData.latitude = data.latitude;
                     appData.longitude = data.longitude;
+                    appData.isp = data.connection?.org;
+                    appData.asn = data.connection?.asn;
                     appData.timezone = data.timezone?.id;
                     
-                    // Update map
+                    // Update maps
                     const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.1},${data.latitude-0.1},${data.longitude+0.1},${data.latitude+0.1}&layer=mapnik&marker=${data.latitude},${data.longitude}`;
-                    document.getElementById('map').src = mapUrl;
+                    document.getElementById('map-background').src = mapUrl;
+                    document.getElementById('map-interactive').src = mapUrl;
                 }
             } catch (err) {
                 console.error('Metadata fetch error:', err);
             }
         }
 
-        // System info
-        function detectOS() {
-            const ua = navigator.userAgent;
-            if (ua.includes('Win')) return 'Windows';
-            if (ua.includes('Mac')) return 'macOS';
-            if (ua.includes('Linux')) return 'Linux';
-            if (ua.includes('Android')) return 'Android';
-            if (ua.includes('iOS')) return 'iOS';
-            return 'Unknown';
-        }
-
-        function detectBrowser() {
-            const ua = navigator.userAgent;
-            if (ua.includes('Firefox')) return 'Firefox';
-            if (ua.includes('Edg')) return 'Edge';
-            if (ua.includes('Chrome')) return 'Chrome';
-            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
-            return 'Unknown';
-        }
-
-        function populateSystemInfo() {
-            const os = detectOS();
-            const browser = detectBrowser();
-            const screen = `${window.screen.width} × ${window.screen.height}`;
-            const platform = navigator.platform;
-            
-            document.getElementById('os').textContent = os;
-            document.getElementById('browser').textContent = browser;
-            document.getElementById('screen').textContent = screen;
-            document.getElementById('platform').textContent = platform;
-            
-            appData.os = os;
-            appData.browser = browser;
-            appData.screen = screen;
-            appData.platform = platform;
-        }
-
-        function populateEnvironment() {
-            const localTime = new Date().toLocaleString();
-            const language = navigator.language;
-            const networkType = navigator.connection?.effectiveType || 'Unknown';
-            const pixelRatio = window.devicePixelRatio;
-            
-            document.getElementById('local-time').textContent = localTime;
-            document.getElementById('language').textContent = language;
-            document.getElementById('network-type').textContent = networkType;
-            document.getElementById('pixel-ratio').textContent = pixelRatio;
-            
-            appData.localTime = localTime;
-            appData.language = language;
-            appData.networkType = networkType;
-            appData.pixelRatio = pixelRatio;
-        }
-
         // Initialize
         async function init() {
             populateSystemInfo();
-            populateEnvironment();
             await Promise.all([
                 fetchIPv4(),
                 fetchIPv6(),
@@ -647,7 +699,10 @@
             ]);
         }
 
-        init();
+        // Only initialize on desktop
+        if (window.innerWidth > 768) {
+            init();
+        }
     </script>
 </body>
 </html>
