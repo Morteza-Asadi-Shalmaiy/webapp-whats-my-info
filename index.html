@@ -45,15 +45,18 @@
             /* Map background */
             #map-background {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
+                top: -10%;
+                left: -10%;
+                width: 120%;
+                height: 120%;
                 z-index: 1;
                 border: none;
-                pointer-events: auto; /* ADD THIS LINE */
+                pointer-events: auto;
                 transition: filter 0.3s;
+                transform: scale(1.15);
+                object-fit: cover;
             }
+
 
             [data-theme="dark"] #map-background {
                 filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
@@ -215,6 +218,15 @@
                 opacity: 1;
                 pointer-events: auto;
             }
+          
+            #refresh-btn {
+                transition: transform 0.5s ease;
+            }
+
+            #refresh-btn:active {
+                transform: rotate(180deg);
+            }
+          
           
             .map-toggle:hover {
                 transform: translateX(-50%) translateY(-2px);
@@ -388,10 +400,12 @@
 <body data-theme="light">
     <!-- Desktop version -->
     <iframe id="map-background" loading="lazy"></iframe>
-    <div id="map-overlay"></div>
 
+    <div id="map-overlay"></div>
+  
     <div class="top-controls">
         <button class="control-btn info-btn-special" id="info-toggle" title="View Details">📡 Details</button>
+        <button class="control-btn" id="refresh-btn" title="Refresh Data">🔄</button>
         <button class="control-btn" id="export-btn" title="Export JSON">📥</button>
         <button class="control-btn" id="theme-toggle" title="Toggle theme">🌙</button>
     </div>
@@ -594,7 +608,24 @@
                 URL.revokeObjectURL(url);
             });
         }
+        
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', async () => {
+                // Add spinning animation
+                refreshBtn.style.transform = 'rotate(360deg)';
+                refreshBtn.style.transition = 'transform 0.5s';
 
+                // Refresh all data
+                await init();
+
+                // Reset animation
+                setTimeout(() => {
+                    refreshBtn.style.transform = 'rotate(0deg)';
+                }, 500);
+            });
+        }
+      
         // Detect OS
         function detectOS() {
             const ua = navigator.userAgent;
