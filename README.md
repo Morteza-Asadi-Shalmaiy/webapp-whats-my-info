@@ -1,9 +1,4 @@
-
-<a href="https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info"
-   target="_blank"
-   rel="noopener noreferrer">
-  🌐 Open WebApp – What’s My Info
-</a>
+(1)[https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info]
 
 
 Future notes :
