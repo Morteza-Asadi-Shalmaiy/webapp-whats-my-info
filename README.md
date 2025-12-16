@@ -1,5 +1,5 @@
 
-<a href="[https://example.com](https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info/)" target="_blank" rel="noopener noreferrer">
+<a href="https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info" target="_blank" rel="noopener noreferrer">
   Open link in new tab
 </a>
 
