@@ -318,8 +318,8 @@
             }
 
             .divider {
-                height: 1px;
-                background: var(--glass-border);
+                height: 0.1px;
+                background: rgba(0, 0, 0, 0.1);
                 margin: 32px 0;
             }
 
@@ -391,7 +391,7 @@
     <div id="map-overlay"></div>
 
     <div class="top-controls">
-        <button class="control-btn info-btn-special" id="info-toggle" title="View Details">ℹ️ Details</button>
+        <button class="control-btn info-btn-special" id="info-toggle" title="View Details">📡 Details</button>
         <button class="control-btn" id="export-btn" title="Export JSON">📥</button>
         <button class="control-btn" id="theme-toggle" title="Toggle theme">🌙</button>
     </div>
@@ -403,25 +403,12 @@
                         <div class="header-title">Your Public IP Address</div>
                         <div class="ip-display" id="ipv4-display" title="Click to copy">Loading...</div>
                     </div>
-
-                    <div class="info-section">
-                        <div class="info-grid">
-                            <div class="info-item" data-value="connection-type">
-                                <div class="info-label">Connection type</div>
-                                <div class="info-value" id="network-type">📡 Loading...</div>
-                            </div>
-                            <div class="info-item" data-value="location">
-                                <div class="info-label">Location</div>
-                                <div class="info-value" id="location">📍 Loading...</div>
-                            </div>
-                        </div>
-                    </div>
-
+      
                     <div class="divider"></div>
-
+      
                     <div class="info-section">
                         <div class="section-title">Network Details</div>
-                        <div class="info-grid">
+                        <div class="info-grid-3">
                             <div class="info-item" data-value="isp">
                                 <div class="info-label">ISP</div>
                                 <div class="info-value" id="isp">Loading...</div>
@@ -438,6 +425,15 @@
                                 <div class="info-label">Timezone</div>
                                 <div class="info-value" id="timezone">Loading...</div>
                             </div>
+                            <div class="info-item" data-value="connection-type">
+                                <div class="info-label">Connection type</div>
+                                <div class="info-value" id="network-type">📡 Loading...</div>
+                            </div>
+                            <div class="info-item" data-value="location">
+                                <div class="info-label">Location</div>
+                                <div class="info-value" id="location">📍 Loading...</div>
+                            </div>
+                         
                         </div>
                     </div>
 
