@@ -52,9 +52,13 @@
                 z-index: 1;
                 border: none;
                 pointer-events: auto; /* ADD THIS LINE */
+                transition: filter 0.3s;
             }
 
-
+            [data-theme="dark"] #map-background {
+                filter: invert(0.9) hue-rotate(180deg) brightness(0.9) contrast(1.1);
+            }
+          
             [data-theme="dark"] #map-overlay {
                 background: rgba(0, 0, 0, 0.5);
             }
@@ -74,7 +78,7 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                z-index: 4;
+                z-index: 6;
                 display: flex;
                 gap: 12px;
             }
@@ -101,6 +105,21 @@
                 box-shadow: 0 6px 16px var(--shadow);
             }
 
+            .info-btn-special {
+                width: auto;
+                padding: 0 20px;
+                border-radius: 24px;
+                gap: 8px;
+                background: var(--accent);
+                color: white;
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .info-btn-special:hover {
+                background: var(--accent-hover);
+            }
+          
             .info-toggle {
                 position: fixed;
                 bottom: 20px;
@@ -372,11 +391,11 @@
     <div id="map-overlay"></div>
 
     <div class="top-controls">
+        <button class="control-btn info-btn-special" id="info-toggle" title="View Details">ℹ️ Details</button>
         <button class="control-btn" id="export-btn" title="Export JSON">📥</button>
         <button class="control-btn" id="theme-toggle" title="Toggle theme">🌙</button>
     </div>
 
-    <button class="info-toggle" id="info-toggle">ℹ️ View Details</button>
     <div id="info-backdrop"></div>
     <div id="info-drawer">
         <button id="info-drawer-close">×</button>
@@ -704,6 +723,12 @@
                 fetchIPv6(),
                 fetchIPMetadata()
             ]);
+          
+            // Show info drawer on first load
+            if (infoDrawer && infoBackdrop) {
+                infoDrawer.classList.add('open');
+                infoBackdrop.classList.add('open');
+            }
         }
 
         // Only initialize on desktop
