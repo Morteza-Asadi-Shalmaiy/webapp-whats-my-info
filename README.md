@@ -1,7 +1,5 @@
 
-<a href="https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info" target="_blank" rel="noopener noreferrer">
-  Open link in new tab
-</a>
+[Open link in new tab](https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info)
 
 Future notes :
 
