@@ -688,8 +688,7 @@
                     appData.timezone = data.timezone?.id;
                     
                     // Update maps
-                    // Update map
-                    const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${data.longitude-0.1},${data.latitude-0.1},${data.longitude+0.1},${data.latitude+0.1}&layer=mapnik&marker=${data.latitude},${data.longitude}`;
+                    const mapUrl = `https://www.google.com/maps?q=${data.latitude},${data.longitude}&output=embed&z=13`;
                     document.getElementById('map-background').src = mapUrl;
                 }
             } catch (err) {
