@@ -1,9 +1,14 @@
-https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info/
+
+<a href="[https://example.com](https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info/)" target="_blank" rel="noopener noreferrer">
+  Open link in new tab
+</a>
 
 Future notes :
 
-1- make it an web page for windows first (find out what to do for telegram and mobile web)
+https://whoer.net/#
 
-2- be fast
+https://www.hotspotshield.com/what-is-my-ip/
 
-3- be pretty
+https://dribbble.com/shots/24523347-UniteVPN-APP-Dark-Version
+
+https://whatismyipaddress.com/
