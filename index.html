@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>What's My Info</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -196,38 +197,6 @@
                 box-shadow: 0 8px 32px var(--shadow);
             }
 
-            /* Top controls */
-            .top-controls {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 6;
-                display: flex;
-                gap: 12px;
-            }
-
-            .control-btn {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                border: 1px solid var(--glass-border);
-                background: var(--glass-bg);
-                backdrop-filter: blur(20px);
-                color: var(--text-primary);
-                font-size: 20px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.2s;
-                box-shadow: 0 4px 12px var(--shadow);
-            }
-
-            .control-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 16px var(--shadow);
-            }
-
             .info-btn-special {
                 width: auto;
                 padding: 0 20px;
@@ -290,6 +259,7 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative; /* Add this */
             }
 
             #info-drawer.open {
@@ -298,28 +268,43 @@
                 pointer-events: auto;
             }
 
-            #info-drawer-close {
+            .drawer-controls {
                 position: absolute;
                 top: 20px;
                 right: 20px;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                border: 1px solid var(--glass-border);
-                background: var(--glass-bg);
-                color: var(--text-primary);
-                font-size: 24px;
-                cursor: pointer;
                 display: flex;
+                gap: 12px;
                 align-items: center;
-                justify-content: center;
-                transition: all 0.2s;
             }
+          
+          .control-btn {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              border: 1px solid var(--glass-border);
+              background: var(--glass-bg);
+              backdrop-filter: blur(20px);
+              color: var(--text-primary);
+              font-size: 20px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s;
+              box-shadow: 0 4px 12px var(--shadow);
+              flex-shrink: 0;
+              margin: 0;
+              position: static;
+          }
 
-            #info-drawer-close:hover {
-                background: var(--accent);
-                color: white;
-            }
+          .control-btn:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 16px var(--shadow);
+          }
+          
+          .control-btn i {
+              font-size: 16px;
+          }
           
             #info-backdrop {
                 position: fixed;
@@ -477,7 +462,41 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
+        
+        .reopen-drawer-btn {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            z-index: 6;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px var(--shadow);
+            opacity: 0;
+            pointer-events: none;
+        }
 
+        .reopen-drawer-btn:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow);
+        }
+
+        .reopen-drawer-btn.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
         /* Mobile styles */
         @media (max-width: 768px) {
             body {
@@ -539,17 +558,16 @@
     <iframe id="map-background" loading="lazy"></iframe>
 
     <div id="map-overlay"></div>
-  
-    <div class="top-controls">
-        <button class="control-btn info-btn-special" id="info-toggle" title="View Details">📡 Details</button>
-        <button class="control-btn" id="refresh-btn" title="Refresh Data">🔄</button>
-        <button class="control-btn" id="export-btn" title="Export JSON">📥</button>
-        <button class="control-btn" id="theme-toggle" title="Toggle theme">🌙</button>
-    </div>
-
     <div id="info-backdrop"></div>
+    <button class="reopen-drawer-btn" id="reopen-drawer-btn"><i class="fa-solid fa-chevron-down"></i></button>
+  
     <div id="info-drawer">
-        <button id="info-drawer-close">×</button>
+        <div class="drawer-controls">
+          <button class="control-btn" id="refresh-btn" title="Refresh Data"><i class="fa-solid fa-rotate-right"></i></button>
+          <button class="control-btn" id="export-btn" title="Export JSON"><i class="fa-solid fa-download"></i></button>
+          <button class="control-btn" id="theme-toggle" title="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+          <button class="control-btn" id="info-drawer-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
         <div class="header">
             <div class="header-title">Your Public IP Address</div>
             <div class="ip-display" id="ipv4-display" title="Click to copy">Loading...</div>
@@ -578,11 +596,11 @@
                 </div>
                 <div class="info-item" data-value="connection-type">
                     <div class="info-label">Connection type</div>
-                    <div class="info-value" id="network-type">📡 Loading...</div>
+                    <div class="info-value" id="network-type">Loading...</div>
                 </div>
                 <div class="info-item" data-value="location">
                     <div class="info-label">Location</div>
-                    <div class="info-value" id="location">📍 Loading...</div>
+                    <div class="info-value" id="location">Loading...</div>
                 </div>
             </div>
         </div>
@@ -658,14 +676,25 @@
         
         const initialTheme = getPreferredTheme();
         body.setAttribute('data-theme', initialTheme);
-        if (themeToggle) themeToggle.textContent = initialTheme === 'dark' ? '☀️' : '🌙';
+        if (themeToggle) {
+            themeToggle.innerHTML = initialTheme === 'dark' 
+                ? '<i class="fa-solid fa-moon"></i>' 
+                : '<i class="fa-solid fa-sun"></i>';
+        }
 
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
                 const current = body.getAttribute('data-theme');
                 const newTheme = current === 'light' ? 'dark' : 'light';
                 body.setAttribute('data-theme', newTheme);
-                themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+
+                // Update button icon
+                if (newTheme === 'dark') {
+                    themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+                } else {
+                    themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                }
+
                 localStorage.setItem('theme', newTheme);
             });
         }
@@ -711,21 +740,25 @@
         const infoDrawer = document.getElementById('info-drawer');
         const infoDrawerClose = document.getElementById('info-drawer-close');
         const infoBackdrop = document.getElementById('info-backdrop');
+        const reopenBtn = document.getElementById('reopen-drawer-btn');
 
-        if (infoToggle && infoDrawer && infoDrawerClose && infoBackdrop) {
-            infoToggle.addEventListener('click', () => {
+        if (infoDrawer && infoDrawerClose && infoBackdrop && reopenBtn) {
+            reopenBtn.addEventListener('click', () => {
                 infoDrawer.classList.add('open');
                 infoBackdrop.classList.add('open');
+                reopenBtn.classList.remove('show');
             });
 
             infoDrawerClose.addEventListener('click', () => {
                 infoDrawer.classList.remove('open');
                 infoBackdrop.classList.remove('open');
+                reopenBtn.classList.add('show');
             });
 
             infoBackdrop.addEventListener('click', () => {
                 infoDrawer.classList.remove('open');
                 infoBackdrop.classList.remove('open');
+                reopenBtn.classList.add('show');
             });
         }
 
@@ -801,7 +834,7 @@
             document.getElementById('screen').textContent = screen;
             document.getElementById('language').textContent = language;
             document.getElementById('pixel-ratio').textContent = pixelRatio;
-            document.getElementById('network-type').textContent = `📡 ${networkType}`;
+            document.getElementById('network-type').textContent = networkType;
             
             appData.os = os;
             appData.browser = browser;
@@ -847,7 +880,7 @@
                 const data = await res.json();
                 
                 if (data.success) {
-                    const location = `📍 ${data.city}, ${data.country}`;
+                    const location = `${data.city}, ${data.country}`;
                     document.getElementById('location').textContent = location;
                     document.getElementById('isp').textContent = data.connection?.org || 'Unknown';
                     document.getElementById('asn').textContent = data.connection?.asn || 'Unknown';
