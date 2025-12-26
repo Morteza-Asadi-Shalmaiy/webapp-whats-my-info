@@ -912,12 +912,13 @@
                 fetchIPv6(),
                 fetchIPMetadata()
             ]);
-          
-            if (infoDrawer && infoBackdrop) {
-                infoDrawer.classList.add('open');
-                infoBackdrop.classList.add('open');
-            }
-
+            setTimeout(() => {
+                if (infoDrawer && infoBackdrop) {
+                    infoDrawer.classList.add('open');
+                    infoBackdrop.classList.add('open');
+                }
+            }, 100); // 100ms delay
+            
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
             }, 800);
