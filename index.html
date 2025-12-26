@@ -786,9 +786,12 @@
 				
                 refreshBtn.style.transform = 'rotate(360deg)';
                 refreshBtn.style.transition = 'transform 0.5s';
-                await init();
+                
+				await init();
+				
                 setTimeout(() => {
                     refreshBtn.style.transform = 'rotate(0deg)';
+					document.getElementById('loading-screen').classList.add('hidden')
                 }, 500);
             });
         }
