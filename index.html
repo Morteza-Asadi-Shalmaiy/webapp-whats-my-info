@@ -780,6 +780,10 @@
         const refreshBtn = document.getElementById('refresh-btn');
         if (refreshBtn) {
             refreshBtn.addEventListener('click', async () => {
+				
+				// Show loading screen during refresh
+				document.getElementById('loading-screen').classList.remove('hidden');
+				
                 refreshBtn.style.transform = 'rotate(360deg)';
                 refreshBtn.style.transition = 'transform 0.5s';
                 await init();
