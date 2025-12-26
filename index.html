@@ -164,6 +164,12 @@
 
         /* Desktop only styles */
         @media (min-width: 769px) {
+
+			.mobile-placeholder,
+			.map-toggle {
+		        display: none !important;
+		    }
+			
             /* Map background */
             #map-background {
                 position: fixed;
@@ -257,7 +263,7 @@
                 padding: 40px;
                 overflow-y: auto;
                 opacity: 0;
-		visibility: hidden;
+				visibility: hidden;
                 pointer-events: none;
                 transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
