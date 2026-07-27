@@ -78,7 +78,11 @@ Everything runs client-side in your browser. No data is sent to or stored on any
 
 ## License
 
-No license specified yet — consider adding one (e.g. MIT) if you want others to reuse this freely.
+No license specified yet 
+
+
+
+
 
 https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info
 01 & 02- webapp-whats-my-info 
