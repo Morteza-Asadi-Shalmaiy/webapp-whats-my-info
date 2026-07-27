@@ -1,6 +1,6 @@
 # What's My Info
 
-A clean, single-file web app that shows your public IP, geolocation, and system details — with a full-screen map background and a glassmorphic info panel on top.
+A clean, single-file web app that shows your public IP, geolocation, and system details — with a full-screen map background and a glassmorphic info panel on the top.
 
 
 
