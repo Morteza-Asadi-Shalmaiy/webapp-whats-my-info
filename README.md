@@ -1,6 +1,8 @@
 # What's My Info
 
-A clean, single-file web app that shows your public IP, geolocation, and system details — with a full-screen map background and a glassmorphic info panel on top.
+A clean, single-file web app that shows your public IP, geolocation, and system details — with a full-screen map background and a glassmorphic info panel on the top.
+
+
 
 🔗 **Live demo:** https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info
 
@@ -82,8 +84,8 @@ No license specified yet — consider adding one (e.g. MIT) if you want others t
 
 https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info
 01 & 02- webapp-whats-my-info 
-refrences :
 
+refrences :
 https://whoer.net/#
 
 https://www.hotspotshield.com/what-is-my-ip/
