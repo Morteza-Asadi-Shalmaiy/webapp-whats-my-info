@@ -84,8 +84,8 @@ No license specified yet — consider adding one (e.g. MIT) if you want others t
 
 https://morteza-asadi-shalmaiy.github.io/webapp-whats-my-info
 01 & 02- webapp-whats-my-info 
-refrences :
 
+refrences :
 https://whoer.net/#
 
 https://www.hotspotshield.com/what-is-my-ip/
