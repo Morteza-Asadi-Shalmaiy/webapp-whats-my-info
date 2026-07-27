@@ -43,13 +43,6 @@ python3 -m http.server 8000
 
 > **Note:** copy-to-clipboard requires HTTPS or `localhost` — it won't work if you open `index.html` directly via `file://`.
 
-## Project structure
-
-```
-webapp-whats-my-info/
-└── index.html   # everything — markup, styles, and scripts — in one file
-```
-
 ## Known limitations
 
 - Location is IP-based (city-level accuracy), not GPS
